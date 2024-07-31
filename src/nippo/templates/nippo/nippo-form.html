@@ -1,15 +1,10 @@
 {% extends "base.html" %}
+
 {% block title %}日報を作成しよう{% endblock %}
 
 {% block content %}
     <form method="POST">{% csrf_token %}
-        <div>
-            <input name="title" type="text" placeholder="タイトル..."/>
-        </div>
-        <div>
-            <textarea type="text" name="content" placeholder="日報..."></textarea>
-        </div>
-        <button type="submit">送信</button>
+        {{ form.as_p }}
+        <button type = "submit">送信</button>
     </form>
-
 {% endblock %}
