@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'allauth',     
     'allauth.account',     
     'allauth.socialaccount',
+    # 追記　django-crispy
+    "crispy_forms",
+    "crispy_bootstrap4",
     # apps
     "nippo",
     "accounts",
@@ -56,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware", #追記
+    
 ]
 
 ROOT_URLCONF = 'main.urls'
@@ -158,3 +162,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGOUT_ON_GET = True
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+

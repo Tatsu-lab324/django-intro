@@ -7,7 +7,20 @@ from .forms import NippoModelForm
 from django.views.generic import ListView,DetailView,FormView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse,reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
+from django.contrib import messages
 
+
+class OwnerOnly(UserPassesTestMixin):
+    # アクセス制限を行う関数
+    def test_func(self):
+        nippo_instance = self.get_object()
+        return nippo_instance.user == self.request.user
+    
+    # Falseだったときのリダイレクト先を指定
+    def handle_no_permission(self):
+        messages.error(self.request,"ご自身の日報のみ編集・削除可能です")
+        return redirect("nippo-detail", pk=self.kwargs["pk"])
 # def nippoListView(request):
 #     template_name = "nippo/nippo-list.html"
 #     ctx = {}
@@ -64,11 +77,15 @@ class NippoDetailView(DetailView):
     
 
 
-class NippoCreateModelFormView(CreateView):
+class NippoCreateModelFormView(LoginRequiredMixin,CreateView):
     template_name = "nippo/nippo-form.html"
     form_class = NippoModelForm
     success_url = reverse_lazy("nippo-list")
 
+    def get_form_kwargs(self):
+        kwgs = super().get_form_kwargs()
+        kwgs["user"] = self.request.user
+        return kwgs
     # def form_valid(self,form):
     #     data = form.cleaned_data
     #     obj = NippoModel(**data)
@@ -94,7 +111,7 @@ class NippoCreateModelFormView(CreateView):
 #             return redirect("nippo-list")
 #     return render(request,template_name,ctx)
 
-class NippoUpdateModelFormView(UpdateView):
+class NippoUpdateModelFormView(OwnerOnly,UpdateView):
     template_name = "nippo/nippo-form.html"
     model = NippoModel
     form_class = NippoModelForm
@@ -110,7 +127,7 @@ class NippoUpdateModelFormView(UpdateView):
 #     return render(request,template_name,ctx)
 
 
-class NippoDeleteView(DeleteView):
+class NippoDeleteView(OwnerOnly,DeleteView):
     template_name = "nippo/nippo-delete.html"
     model = NippoModel
     success_url = reverse_lazy("nippo-list")
