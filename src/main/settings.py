@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 追記 django-allauth       
+    'django.contrib.sites',    
+    'allauth',     
+    'allauth.account',     
+    'allauth.socialaccount',
+    # apps
     "nippo",
     "accounts",
 ]
@@ -49,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware", #追記
 ]
 
 ROOT_URLCONF = 'main.urls'
@@ -129,3 +136,25 @@ MEDIA_ROOT = BASE_DIR / "media_local"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "accounts.User"
+
+AUTHENTICATION_BACKENDS = [ 
+  'django.contrib.auth.backends.ModelBackend',     
+  'allauth.account.auth_backends.AuthenticationBackend',
+] 
+
+SITE_ID = 1
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+
+from django.urls import reverse_lazy
+LOGIN_REDIRECT_URL = reverse_lazy('nippo-list')
+ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy("account_login")
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+ACCOUNT_LOGOUT_ON_GET = True
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
